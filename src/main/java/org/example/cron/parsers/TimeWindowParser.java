@@ -56,7 +56,7 @@ public class TimeWindowParser {
     private void handleRepeatPattern(String token, TimeWindow timeWindow) throws InvalidCronExpressionException {
         int repeat = 1;
         if(token.length() > 1 && token.charAt(1) != '/'){
-            throw new InvalidCronExpressionException(String.format("'%s' has a invalid format", timeWindowType));
+            throw new InvalidCronExpressionException(String.format(TOKEN_INVALID, timeWindowType));
         }
         if(token.length() > 1)
             repeat = parseNumber(token.split("/")[1]);
