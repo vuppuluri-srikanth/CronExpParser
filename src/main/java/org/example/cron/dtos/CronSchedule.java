@@ -19,7 +19,8 @@ public class CronSchedule {
             sb.append(timeWindow.toString());
             sb.append("\n");
         }
-        sb.append(String.format("%-14s%s%n", "command", command));
+        sb.append(String.format("%-14s%s", "command", command));
+        sb.append("\n");
         return sb.toString();
     }
 }

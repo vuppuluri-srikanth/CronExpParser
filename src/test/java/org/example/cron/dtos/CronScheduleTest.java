@@ -14,12 +14,12 @@ class CronScheduleTest {
     @Test
     void testToString() {
         String expectedOutput = """
-                minute        0 15 30 45\r
-                hour          0\r
-                day of month  1 15\r
-                month         1 2 3 4 5 6 7 8 9 10 11 12\r
-                day of week   1 2 3 4 5\r
-                command       /usr/bin/find\r
+                minute        0 15 30 45
+                hour          0
+                day of month  1 15
+                month         1 2 3 4 5 6 7 8 9 10 11 12
+                day of week   1 2 3 4 5
+                command       /usr/bin/find
                 """;
 
         CronSchedule cronSchedule = new CronSchedule("/usr/bin/find", List.of(

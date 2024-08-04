@@ -14,7 +14,7 @@ public class TimeWindowParser {
     TimeWindowType timeWindowType;
 
     public TimeWindow parse(String expression) throws InvalidCronExpressionException {
-        TimeWindow timeWindow = new TimeWindow(TimeWindowType.MINUTE, new ArrayList<>());
+        TimeWindow timeWindow = new TimeWindow(timeWindowType, new ArrayList<>());
         if(!expression.matches("[0-9*,/-]*"))
             throw new InvalidCronExpressionException(String.format("'%s' contains invalid characters", timeWindowType));
 
