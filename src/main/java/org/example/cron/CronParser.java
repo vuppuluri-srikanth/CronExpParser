@@ -8,11 +8,20 @@ import org.example.cron.parsers.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.System.exit;
+import static org.example.cron.constants.ErrorConstants.TOO_FEW_TOKENS;
 
 public class CronParser {
+    public static final String CRON_EXP = "([^\s]*) +([^\s]*) +([^\s]*) +([^\s]*) +([^\s]*) +(.*)";
+    public static final Pattern CRON_PATTERN = Pattern.compile(CRON_EXP);
+
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Cron expression not passed. Usage: CronParser <Cron Expression>");
+            System.out.println("Error: Cron expression not passed. Usage: CronParser <Cron Expression>");
+            exit(1);
         }
         CronParser cronParser = new CronParser();
         try {
@@ -24,26 +33,23 @@ public class CronParser {
     }
 
     public CronSchedule parseExpression(String expression) throws InvalidCronExpressionException{
-        validateExpression(expression);
-        String[] tokens = expression.strip().split(" ");
-        TimeWindowType[] types = TimeWindowType.values();
-        List<TimeWindow> windows = new ArrayList<>();
-        for(int i = 0; i < types.length; i++){
-            windows.add(new TimeWindowParser(types[i]).parse(tokens[i]));
+        Matcher matcher = CRON_PATTERN.matcher(expression.strip());
+
+        if(!matcher.matches()){
+            throw new InvalidCronExpressionException(TOO_FEW_TOKENS);
         }
-        return new CronSchedule(tokens[5], windows);
-    }
 
-    private void validateExpression(String expression) throws InvalidCronExpressionException {
-        if (expression.isBlank())
-            throw new InvalidCronExpressionException("Expression is empty");
-        if (expression.contains("?"))
-            throw new InvalidCronExpressionException("? is not supported");
+        TimeWindowType[] types = TimeWindowType.values();
+        List<TimeWindow> timeWindows = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String token = matcher.group(i + 1);
+            TimeWindowType type = types[i];
 
-        String[] tokens = expression.strip().split(" ");
-        if(tokens.length < 6)
-            throw new InvalidCronExpressionException("Expression has less than 6 tokens");
-        if(tokens.length > 6)
-            throw new InvalidCronExpressionException("Expression has more than 6 tokens");
+            TimeWindowParser timeWindowParser = new TimeWindowParser(type);
+            timeWindows.add(timeWindowParser.parse(token));
+        }
+
+        String command = matcher.group(6);
+        return new CronSchedule(command, timeWindows);
     }
 }

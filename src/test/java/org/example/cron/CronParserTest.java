@@ -16,13 +16,10 @@ class CronParserTest {
     private static Stream<Arguments> provideInputAndErrorMessageForFailureScenarios() {
         return Stream.of(
                 //Expression tests
-                Arguments.of("", "Cron Expression is invalid. Expression is empty"),
-                Arguments.of(" ", "Cron Expression is invalid. Expression is empty"),
-                Arguments.of("*/15 0 1,15 * 1-5", "Cron Expression is invalid. Expression has less than 6 tokens"),
-                Arguments.of("*/15 0 1,15 ? 1-5 /usr/bin/find", "Cron Expression is invalid. ? is not supported"),
-
-                Arguments.of("*/15 0 W * L @yearly /usr/bin/find", "Cron Expression is invalid. Expression has more than 6 tokens"),
-                Arguments.of("  0 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. Expression has less than 6 tokens"),
+                Arguments.of("", "Cron Expression is invalid. Too few tokens in the expression"),
+                Arguments.of(" ", "Cron Expression is invalid. Too few tokens in the expression"),
+                Arguments.of("*/15 0 1,15 * 1-5", "Cron Expression is invalid. Too few tokens in the expression"),
+                Arguments.of("  0 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. Too few tokens in the expression"),
 
                 //Minutes tests
                 Arguments.of("*/@ 0 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'minute' contains invalid characters"),
@@ -34,6 +31,7 @@ class CronParserTest {
                 //Minutes tests
                 Arguments.of("* */@ 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' contains invalid characters"),
                 Arguments.of("* */1-5 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' is invalid. Invalid number provided"),
+                Arguments.of("* 1-5/* 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' is invalid. Invalid number provided"),
                 Arguments.of("* */24 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' is invalid. Number provided is outside bounds: 0 - 23"),
                 Arguments.of("0 -1 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' is invalid. Invalid number provided"),
                 Arguments.of("0 25,60,100 1,15 * 1-5 /usr/bin/find", "Cron Expression is invalid. 'hour' is invalid. Number provided is outside bounds: 0 - 23"),
@@ -52,6 +50,7 @@ class CronParserTest {
                 Arguments.of("* * * */13 1-5 /usr/bin/find", "Cron Expression is invalid. 'month' is invalid. Number provided is outside bounds: 1 - 12"),
                 Arguments.of("0 * * -1 1-5 /usr/bin/find", "Cron Expression is invalid. 'month' is invalid. Invalid number provided"),
                 Arguments.of("0 * * 25,60,100 1-5 /usr/bin/find", "Cron Expression is invalid. 'month' is invalid. Number provided is outside bounds: 1 - 12"),
+                Arguments.of("*/15 0 1,15 ? 1-5 /usr/bin/find", "Cron Expression is invalid. 'month' contains invalid characters"),
 
                 //Day of Week tests
                 Arguments.of("*/15 0 * * L /usr/bin/find", "Cron Expression is invalid. 'day of week' contains invalid characters"),
@@ -83,6 +82,15 @@ class CronParserTest {
                         day of week   0 1 2 3 4 5 6
                         command       /usr/bin/find
                         """),
+                Arguments.of("*    *    *    *    *    /usr/bin/find",
+                        """
+                        minute        0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
+                        hour          0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+                        day of month  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+                        month         1 2 3 4 5 6 7 8 9 10 11 12
+                        day of week   0 1 2 3 4 5 6
+                        command       /usr/bin/find
+                        """),
                 Arguments.of("*/57 10-15 5 1,5 0-3 /usr/bin/find",
                         """
                         minute        0 57
@@ -91,6 +99,15 @@ class CronParserTest {
                         month         1 5
                         day of week   0 1 2 3
                         command       /usr/bin/find
+                        """),
+                Arguments.of("*/57 10-15 5 1,5 0-3 /usr/bin/find . -type f -name file.txt",
+                        """
+                        minute        0 57
+                        hour          10 11 12 13 14 15
+                        day of month  5
+                        month         1 5
+                        day of week   0 1 2 3
+                        command       /usr/bin/find . -type f -name file.txt
                         """)
         );
     }

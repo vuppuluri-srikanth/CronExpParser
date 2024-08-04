@@ -17,9 +17,9 @@ public class TimeWindow {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-13s", timeWindowType.toString()));
-        for (int minute : values) {
+        for (int value : values) {
             sb.append(" ");
-            sb.append(minute);
+            sb.append(value);
         }
         return sb.toString();
     }
