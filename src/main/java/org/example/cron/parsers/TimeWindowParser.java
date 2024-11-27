@@ -6,7 +6,7 @@ import org.example.cron.dtos.TimeWindow;
 import org.example.cron.dtos.TimeWindowType;
 import org.example.cron.exceptions.InvalidCronExpressionException;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static org.example.cron.constants.ErrorConstants.*;
 
@@ -16,7 +16,7 @@ public class TimeWindowParser {
     TimeWindowType timeWindowType;
 
     public TimeWindow parse(String token) throws InvalidCronExpressionException {
-        TimeWindow timeWindow = new TimeWindow(timeWindowType, new ArrayList<>());
+        TimeWindow timeWindow = new TimeWindow(timeWindowType, new TreeSet<>());
         if(!token.matches("[0-9*,/-]*"))
             throw new InvalidCronExpressionException(String.format(TOKEN_INVALID_CHARS, timeWindowType));
 

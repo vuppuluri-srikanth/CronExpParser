@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-import java.util.List;
+import java.util.TreeSet;
 
 @Value
 @AllArgsConstructor
 public class TimeWindow {
     TimeWindowType timeWindowType;
     @Getter
-    List<Integer> values;
+    TreeSet<Integer> values;
 
     @Override
     public String toString() {
